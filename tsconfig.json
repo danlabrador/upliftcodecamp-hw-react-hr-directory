@@ -8,8 +8,9 @@
       "DOM.Iterable"
     ],
     "types": [
-      "cypress",
-      "node"
+      "node",
+      "jest",
+      "cypress"
     ],
     "module": "ESNext",
     "skipLibCheck": true,
@@ -28,7 +29,8 @@
   },
   "include": [
     "src",
-    "cypress",
+    "jest",
+    // "cypress"
   ],
   "references": [
     {
