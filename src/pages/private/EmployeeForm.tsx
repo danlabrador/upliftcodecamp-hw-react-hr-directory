@@ -21,6 +21,7 @@ export const EmployeeForm = () => {
     useEmployeeForm(user);
 
   const navigate = useNavigate();
+  const { clearLocalStorage } = useEmployeeForm();
 
   return (
     <form className="flex flex-col gap-4" onSubmit={handleSubmit(onSubmit)}>
@@ -86,6 +87,7 @@ export const EmployeeForm = () => {
           className="w-1/4 min-w-32"
           onClick={() => {
             navigate('/employees');
+            clearLocalStorage();
           }}
         >
           Cancel

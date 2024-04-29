@@ -22,7 +22,7 @@ describe('employees', () => {
   });
 
   it('should get the last id correctly', () => {
-    const lastId = getLastId();
+    const lastId = getLastId(employees);
     const maxId = Math.max(...employees.map(employee => employee.id as number));
     expect(lastId).toEqual(maxId);
   });

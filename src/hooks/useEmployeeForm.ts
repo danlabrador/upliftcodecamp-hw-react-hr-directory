@@ -28,7 +28,7 @@ const schema = z.object({
 
 type FormFields = z.infer<typeof schema>;
 
-export function useEmployeeForm(user: User | undefined) {
+export function useEmployeeForm(user?: User) {
   // MARK: Form
   // Set up local storage for form values
   const {
@@ -89,9 +89,16 @@ export function useEmployeeForm(user: User | undefined) {
     resolver: zodResolver(schema),
   });
 
+  const clearLocalStorage = () => {
+    removeLSName();
+    removeLSEmail();
+    removeLSRole();
+    removeLSEmergencyContactName();
+    removeLSEmergencyContactNumber();
+  };
+
   // Update local storage when form values change
   const formValues = watch();
-
   useEffect(() => {
     if (isSubmitting) return;
     if (formValues.name) setLSName(formValues.name);
@@ -165,5 +172,6 @@ export function useEmployeeForm(user: User | undefined) {
     isSubmitting,
     onSubmit,
     register,
+    clearLocalStorage,
   };
 }

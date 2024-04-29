@@ -82,3 +82,11 @@ export const employees: User[] = [
     role: 'Receptionist',
   },
 ];
+
+export const getLastId = (employees: User[]): number => {
+  if (employees.length === 0) {
+    return 0;
+  }
+
+  return Math.max(...employees.map(employee => employee.id as number));
+};
