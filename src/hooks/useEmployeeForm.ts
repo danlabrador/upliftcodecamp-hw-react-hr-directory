@@ -114,12 +114,12 @@ export function useEmployeeForm(user: User | undefined) {
     isSubmitting,
   ]);
 
-  // MARK: Phone Key Down
   const handlePhoneKeyDown = (event: KeyboardEvent<HTMLInputElement>) => {
     if (
       event.key === 'Enter' ||
       (event.key !== 'Backspace' &&
         !(event.key === 'a' && (event.ctrlKey || event.metaKey)) &&
+        !['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight'].includes(event.key) &&
         !/^(\+)?[0-9]*$/.test(event.currentTarget.value + event.key))
     ) {
       event.preventDefault();
