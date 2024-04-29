@@ -1,7 +1,7 @@
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
-import PrivateLayout from './pages/private/PrivateLayout';
+import { EmployeeForm } from './pages/private/EmployeeForm';
 import Employees from './pages/private/Employees';
-import { AddEmployee } from './pages/private/AddEmployee';
+import PrivateLayout from './pages/private/PrivateLayout';
 
 function App() {
   return (
@@ -10,7 +10,8 @@ function App() {
         <Route element={<PrivateLayout />}>
           <Route path="/" element={<Employees />} />
           <Route path="/employees" element={<Employees />} />
-          <Route path="/employees/add" element={<AddEmployee />} />
+          <Route path="/employees/add" element={<EmployeeForm />} />
+          <Route path="/employees/edit/:id" element={<EmployeeForm />} />
         </Route>
       </Routes>
     </BrowserRouter>

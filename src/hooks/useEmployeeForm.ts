@@ -1,11 +1,13 @@
+import { addEmployee, editEmployee } from '../services/state/employees/employeesSlice';
 import { KeyboardEvent, useEffect } from 'react';
+import { RootState } from '../services/state/store';
 import { SubmitHandler, useForm } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { z } from 'zod';
-import { User } from '../interfaces/User';
+import { useDispatch, useSelector } from 'react-redux';
 import { useLocalStorage } from './useLocalStorage';
 import { useNavigate } from 'react-router-dom';
-import { employees, getLastId } from '../services/api/employees';
+import { User } from '../interfaces/User';
+import { z } from 'zod';
+import { zodResolver } from '@hookform/resolvers/zod';
 
 // Set up a schema and type for the form fields
 const schema = z.object({
@@ -70,12 +72,12 @@ export function useEmployeeForm(user: User | undefined) {
   } = useForm({
     defaultValues: user
       ? {
-          name: getLSName() || user.name || '',
-          email: getLSEmail() || user.email || '',
-          role: getLSRole() || user.role || '',
-          emergencyContactName: getLSEmergencyContactName() || user.emergencyContactName || '',
+          name: user.name || getLSName() || '',
+          email: user.email || getLSEmail() || '',
+          role: user.role || getLSRole() || '',
+          emergencyContactName: user.emergencyContactName || getLSEmergencyContactName() || '',
           emergencyContactNumber:
-            getLSEmergencyContactNumber() || user.emergencyContactNumber || '',
+            user.emergencyContactNumber || getLSEmergencyContactNumber() || '',
         }
       : {
           name: getLSName() || '',
@@ -89,7 +91,9 @@ export function useEmployeeForm(user: User | undefined) {
 
   // Update local storage when form values change
   const formValues = watch();
+
   useEffect(() => {
+    if (isSubmitting) return;
     if (formValues.name) setLSName(formValues.name);
     if (formValues.email) setLSEmail(formValues.email);
     if (formValues.role) setLSRole(formValues.role);
@@ -107,6 +111,7 @@ export function useEmployeeForm(user: User | undefined) {
     setLSRole,
     setLSEmergencyContactName,
     setLSEmergencyContactNumber,
+    isSubmitting,
   ]);
 
   // MARK: Phone Key Down
@@ -122,11 +127,14 @@ export function useEmployeeForm(user: User | undefined) {
   };
 
   // MARK: Submit
+  const employees = useSelector((state: RootState) => state.employees);
+  const dispatch = useDispatch();
   const navigate = useNavigate();
   const onSubmit: SubmitHandler<FormFields> = async (data: User) => {
     try {
       await new Promise(resolve => setTimeout(resolve, 1000));
       // Remove local storage values
+      reset();
       removeLSName();
       removeLSEmail();
       removeLSRole();
@@ -134,10 +142,14 @@ export function useEmployeeForm(user: User | undefined) {
       removeLSEmergencyContactNumber();
       reset();
 
-      // Add the new employee to the list
-      data.id = getLastId() + 1;
-      employees.push(data);
-      console.log(employees);
+      // Handle form submission
+      if (user) {
+        dispatch(editEmployee({ id: user.id as number, ...data }));
+      } else {
+        const id =
+          employees.reduce((acc, curr) => (curr.id && curr.id > acc ? curr.id : acc), 0) + 1;
+        dispatch(addEmployee({ id, ...data }));
+      }
       navigate('/employees');
     } catch (error) {
       setError('root', {

@@ -82,6 +82,3 @@ export const employees: User[] = [
     role: 'Receptionist',
   },
 ];
-
-export const getLastId = () =>
-  employees.reduce((acc, curr) => (curr.id && curr.id > acc ? curr.id : acc), 0);

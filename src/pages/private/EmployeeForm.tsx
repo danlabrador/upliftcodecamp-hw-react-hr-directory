@@ -1,26 +1,33 @@
-import { User } from '../../interfaces/User';
-import Input from '../../components/ui/Input';
-import Button from '../../components/ui/Button';
-import InputError from '../../components/ui/InputError';
+import { Link, useNavigate, useParams } from 'react-router-dom';
+import { RootState } from '../../services/state/store';
 import { useEmployeeForm } from '../../hooks/useEmployeeForm';
+import { useSelector } from 'react-redux';
+import Button from '../../components/ui/Button';
 import H2 from '../../components/ui/H2';
 import H3 from '../../components/ui/H3';
+import Input from '../../components/ui/Input';
+import InputError from '../../components/ui/InputError';
 
 interface FormError {
   message: string;
 }
 
-interface AddEmployeeProps {
-  user?: User;
-}
+export const EmployeeForm = () => {
+  const { id } = useParams();
+  const employees = useSelector((state: RootState) => state.employees);
+  const user = employees.find(employee => employee.id === Number(id));
 
-export const AddEmployee = ({ user }: AddEmployeeProps) => {
   const { register, handleSubmit, handlePhoneKeyDown, errors, isSubmitting, onSubmit } =
     useEmployeeForm(user);
 
+  const navigate = useNavigate();
+
   return (
     <form className="flex flex-col gap-4" onSubmit={handleSubmit(onSubmit)}>
-      <H2 value="Add Employee" />
+      <Link className="text-indigo-600 hover:underline" to="/employees">
+        &lt; Back to Employees page
+      </Link>
+      <H2 value={id ? 'Edit Employee' : 'Add Employee'} />
 
       <H3 value="Employee Details" />
       <fieldset className="space-y-1">
@@ -69,9 +76,21 @@ export const AddEmployee = ({ user }: AddEmployeeProps) => {
         <InputError error={errors.emergencyContactNumber as FormError} />
       </fieldset>
 
-      <Button className="w-1/4 min-w-32" type="submit" disabled={isSubmitting}>
-        Add Employee
-      </Button>
+      <div className="flex gap-4">
+        <Button className="w-1/4 min-w-32" type="submit" disabled={isSubmitting}>
+          {id ? 'Save' : 'Add'}
+        </Button>
+
+        <Button
+          variant="secondary"
+          className="w-1/4 min-w-32"
+          onClick={() => {
+            navigate('/employees');
+          }}
+        >
+          Cancel
+        </Button>
+      </div>
       {errors.root && <div className="text-red-500">{errors.root.message}</div>}
     </form>
   );

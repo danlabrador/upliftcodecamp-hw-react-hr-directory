@@ -1,4 +1,5 @@
-import { employees } from './employees';
+import { User } from '../../interfaces/User';
+import { employees, getLastId } from './employees';
 
 describe('employees', () => {
   it('should contain an array of employees', () => {
@@ -18,5 +19,17 @@ describe('employees', () => {
       expect(employee).toHaveProperty('name');
       expect(employee).toHaveProperty('role');
     });
+  });
+
+  it('should get the last id correctly', () => {
+    const lastId = getLastId();
+    const maxId = Math.max(...employees.map(employee => employee.id as number));
+    expect(lastId).toEqual(maxId);
+  });
+
+  it('should return 0 the list is empty', () => {
+    const employees = [] as User[];
+    const lastId = getLastId(employees);
+    expect(lastId).toEqual(0);
   });
 });
